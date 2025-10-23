@@ -1,0 +1,43 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
+import ProtectedRoute from './components/auth/ProtectedRoute'
+import LoginPage from './components/auth/LoginPage'
+import SignUpPage from './components/auth/SignUpPage'
+import Dashboard from './pages/Dashboard'
+import CoursePage from './pages/CoursePage'
+import LessonPage from './pages/LessonPage'
+import ProfilePage from './pages/ProfilePage'
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/course/:courseId" element={<CoursePage />} />
+          <Route
+            path="/lesson/:lessonId"
+            element={
+              <ProtectedRoute>
+                <LessonPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  )
+}
+
+export default App
