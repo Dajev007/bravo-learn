@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import CoursePage from './pages/CoursePage'
 import LessonPage from './pages/LessonPage'
 import ProfilePage from './pages/ProfilePage'
+import InstallPWAPrompt from './components/layout/InstallPWAPrompt'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        <InstallPWAPrompt />
       </Router>
     </AuthProvider>
   )

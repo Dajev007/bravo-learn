@@ -28,4 +28,19 @@
   .lesson-card {
     @apply bg-white rounded-xl border-2 border-gray-200 hover:border-primary-500 p-4 cursor-pointer transition-all hover:scale-105;
   }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
