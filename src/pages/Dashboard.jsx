@@ -66,7 +66,7 @@ export default function Dashboard() {
               <h1 className="text-2xl font-bold text-gray-900">BravoLearn</h1>
             </div>
             {profile && (
-              <div className="flex items-center space-x-6">
+              <Link to="/profile" className="flex items-center space-x-6 hover:opacity-80 transition-opacity">
                 <div className="flex items-center space-x-2">
                   <Flame className="w-5 h-5 text-orange-500" />
                   <span className="font-bold text-gray-900">{profile.streak_count}</span>
@@ -79,7 +79,10 @@ export default function Dashboard() {
                   <Trophy className="w-5 h-5 text-primary-600" />
                   <span className="font-bold text-gray-900">Lvl {profile.level}</span>
                 </div>
-              </div>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold">
+                  {profile.display_name?.charAt(0).toUpperCase() || 'U'}
+                </div>
+              </Link>
             )}
           </div>
         </div>

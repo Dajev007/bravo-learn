@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard'
 import CoursePage from './pages/CoursePage'
 import LessonPage from './pages/LessonPage'
 import ProfilePage from './pages/ProfilePage'
+import DebugPage from './pages/DebugPage'
+import SimpleDebug from './pages/SimpleDebug'
 import InstallPWAPrompt from './components/layout/InstallPWAPrompt'
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/debug" element={<DebugPage />} />
+          <Route path="/simple-debug" element={<SimpleDebug />} />
           <Route path="/course/:courseId" element={<CoursePage />} />
           <Route
             path="/lesson/:lessonId"

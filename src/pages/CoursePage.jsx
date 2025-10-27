@@ -64,7 +64,18 @@ export default function CoursePage() {
           .eq('course_id', courseId)
           .single()
 
-        setEnrolled(!!enrollmentData)
+        // Auto-enroll if not already enrolled
+        if (!enrollmentData) {
+          await supabase
+            .from('course_enrollments')
+            .insert({
+              user_id: profile.id,
+              course_id: courseId,
+            })
+          setEnrolled(true)
+        } else {
+          setEnrolled(true)
+        }
 
         const { data: progressData } = await supabase
           .from('lesson_progress')
@@ -105,17 +116,29 @@ export default function CoursePage() {
     }
   }
 
-  const getLessonStatus = (lesson, index, unitLessons) => {
+  const getLessonStatus = (lesson, index, unitLessons, unitIndex) => {
     if (!profile) return 'locked'
+    if (!enrolled) return 'locked'
 
     const lessonProgress = progress[lesson.id]
     if (lessonProgress?.status === 'completed') return 'completed'
     if (lessonProgress?.status === 'in_progress') return 'in_progress'
 
-    // First lesson is always unlocked if enrolled
-    if (index === 0 && enrolled) return 'unlocked'
+    // First lesson of first unit is always unlocked if enrolled
+    if (unitIndex === 0 && index === 0) return 'unlocked'
 
-    // Check if previous lesson is completed
+    // First lesson of other units: check if previous unit has any completed lessons
+    if (index === 0 && unitIndex > 0) {
+      const prevUnit = units[unitIndex - 1]
+      const prevUnitLessons = lessons[prevUnit.id] || []
+      const hasCompletedInPrevUnit = prevUnitLessons.some(l =>
+        progress[l.id]?.status === 'completed'
+      )
+      if (hasCompletedInPrevUnit) return 'unlocked'
+      return 'locked'
+    }
+
+    // For other lessons in the unit, check if previous lesson is completed
     if (index > 0) {
       const prevLesson = unitLessons[index - 1]
       const prevProgress = progress[prevLesson.id]
@@ -178,19 +201,19 @@ export default function CoursePage() {
             </div>
           </div>
 
-          {!enrolled && profile && (
-            <button
-              onClick={enrollInCourse}
-              className="btn-primary mt-6"
-            >
-              Enroll in Course
-            </button>
-          )}
-
           {!profile && (
             <Link to="/login" className="btn-primary mt-6 inline-block">
               Sign in to Start Learning
             </Link>
+          )}
+
+          {profile && (
+            <div className="mt-6 flex items-center space-x-2 text-primary-600">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="font-semibold">You're enrolled! Start learning below.</span>
+            </div>
           )}
         </div>
       </div>
@@ -212,7 +235,7 @@ export default function CoursePage() {
 
               <div className="space-y-3">
                 {(lessons[unit.id] || []).map((lesson, lessonIndex) => {
-                  const status = getLessonStatus(lesson, lessonIndex, lessons[unit.id])
+                  const status = getLessonStatus(lesson, lessonIndex, lessons[unit.id], unitIndex)
                   const isLocked = status === 'locked'
                   const isCompleted = status === 'completed'
 
